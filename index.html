@@ -1174,19 +1174,37 @@
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  function submitForm() {
+  async function submitForm() {
     const name = document.getElementById('f-name').value.trim();
     const email = document.getElementById('f-email').value.trim();
     const interest = document.getElementById('f-interest').value;
+    const message = document.getElementById('f-msg').value.trim();
     if (!name || !email || !interest) {
       alert('Please fill in your name, email and area of interest.');
       return;
     }
     const btn = document.querySelector('.form-submit');
-    btn.textContent = 'Submitted! We\'ll be in touch within 24hrs ✓';
-    btn.style.background = '#1a6b5a';
+    btn.textContent = 'Sending…';
     btn.disabled = true;
-    setTimeout(closeModal, 2500);
+    try {
+      const res = await fetch('https://formspree.io/f/xzdoynre', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, interest, message })
+      });
+      if (res.ok) {
+        btn.textContent = 'Submitted! We\'ll be in touch within 24hrs ✓';
+        btn.style.background = '#1a6b5a';
+        setTimeout(closeModal, 2500);
+      } else {
+        btn.textContent = 'Something went wrong — please email us directly.';
+        btn.style.background = '#c0392b';
+        btn.disabled = false;
+      }
+    } catch (e) {
+      btn.textContent = 'Network error — please try again.';
+      btn.disabled = false;
+    }
   }
 
   /* ─── LIVE DASHBOARD TICKER ─── */
