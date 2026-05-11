@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OptionsForQuants — Quant Finance · Options · Algo Trading</title>
+<meta name="description" content="Wealth advisory, options education, and algo trading platform built on quant principles. AMFI registered. Book a free consultation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0f0e0c;
+    --ink2: #3a3834;
+    --ink3: #7a7770;
+    --paper: #faf8f4;
+    --paper2: #f0ede6;
+    --paper3: #e6e2d8;
+    --gold: #c8922a;
+    --gold-light: #f0d48a;
+    --teal: #1a6b5a;
+    --teal-light: #d0ede7;
+    --danger: #c0392b;
+    --border: rgba(15,14,12,0.12);
+    --border-strong: rgba(15,14,12,0.22);
+    --ff-display: 'DM Serif Display', Georgia, serif;
+    --ff-body: 'DM Sans', sans-serif;
+    --ff-mono: 'DM Mono', monospace;
+    --nav-h: 64px;
+    --max: 1080px;
+    --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--ff-body);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── UTILITY ─── */
+  .container { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+  .label {
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink3);
+  }
+  .gold { color: var(--gold); }
+  .teal { color: var(--teal); }
+
+  /* ─── NAVBAR ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--nav-h);
+    background: rgba(250,248,244,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+  }
+  .nav-inner {
+    max-width: var(--max); margin: 0 auto; padding: 0 28px;
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px;
+  }
+  .nav-logo {
+    font-family: var(--ff-display);
+    font-size: 20px;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  .nav-logo em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .nav-links {
+    display: flex; gap: 32px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 14px; font-weight: 400;
+    color: var(--ink2); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--ff-body); font-size: 14px; font-weight: 500;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 6px;
+    padding: 10px 20px; cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--ink2); transform: translateY(-1px); }
+  .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+  .hamburger span {
+    display: block; width: 22px; height: 1.5px;
+    background: var(--ink); margin: 5px 0;
+    transition: all 0.3s var(--ease);
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    padding-top: var(--nav-h);
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(200,146,42,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 70%, rgba(26,107,90,0.06) 0%, transparent 60%);
+  }
+  .hero-grid-line {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+  .hero-inner {
+    position: relative; z-index: 1;
+    max-width: var(--max); margin: 0 auto; padding: 80px 28px;
+    display: grid; grid-template-columns: 1fr 420px; gap: 60px; align-items: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-bottom: 24px;
+  }
+  .hero-eyebrow-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+  .hero h1 {
+    font-family: var(--ff-display);
+    font-size: clamp(38px, 5vw, 62px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    color: var(--ink);
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    font-size: 17px; font-weight: 300;
+    color: var(--ink2); line-height: 1.7;
+    margin-bottom: 36px;
+    max-width: 500px;
+  }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--ff-body); font-size: 15px; font-weight: 500;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 6px;
+    padding: 14px 28px; cursor: pointer; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--ink2); transform: translateY(-1px); }
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--ff-body); font-size: 15px; font-weight: 400;
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--border-strong); border-radius: 6px;
+    padding: 14px 28px; cursor: pointer; text-decoration: none;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
+  .btn-outline:hover { background: var(--paper2); transform: translateY(-1px); }
+  .trust-strip {
+    display: flex; gap: 28px; flex-wrap: wrap;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .trust-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--ink3);
+  }
+  .trust-icon {
+    width: 20px; height: 20px;
+    background: var(--paper2); border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+
+  /* HERO RIGHT — live card */
+  .hero-card {
+    background: var(--paper);
+    border: 1px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 2px 40px rgba(15,14,12,0.07), 0 1px 4px rgba(15,14,12,0.05);
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--ink2); }
+  .live-badge {
+    display: flex; align-items: center; gap: 5px;
+    font-family: var(--ff-mono); font-size: 10px; color: var(--teal);
+    background: var(--teal-light); border-radius: 4px; padding: 3px 8px;
+  }
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--teal);
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+  .metric-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-name { font-size: 13px; color: var(--ink3); }
+  .metric-val {
+    font-family: var(--ff-mono); font-size: 14px; font-weight: 500;
+    color: var(--ink);
+  }
+  .metric-val.up { color: #1a7a3c; }
+  .metric-val.watch { color: var(--gold); }
+  .card-footer {
+    margin-top: 20px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .card-cta {
+    width: 100%; padding: 12px;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 8px;
+    font-family: var(--ff-body); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .card-cta:hover { background: var(--ink2); }
+
+  /* ─── SECTION COMMON ─── */
+  section { padding: 88px 0; }
+  section.alt { background: var(--paper2); }
+  section.dark { background: var(--ink); color: var(--paper); }
+  .section-head { margin-bottom: 52px; }
+  .section-head h2 {
+    font-family: var(--ff-display);
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.15; letter-spacing: -0.02em;
+    margin-top: 10px;
+  }
+  .section-head p {
+    font-size: 16px; font-weight: 300;
+    color: var(--ink2); max-width: 520px;
+    margin-top: 14px; line-height: 1.7;
+  }
+  section.dark .section-head p { color: rgba(250,248,244,0.6); }
+
+  /* ─── SERVICES / THREE LAYERS ─── */
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  }
+  .service-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 28px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    cursor: default;
+  }
+  .service-card:hover {
+    border-color: var(--border-strong);
+    box-shadow: 0 4px 24px rgba(15,14,12,0.08);
+    transform: translateY(-2px);
+  }
+  .service-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(145deg, #fffdf7 0%, var(--paper) 100%);
+  }
+  .service-badge {
+    display: inline-block;
+    font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.08em;
+    background: var(--gold-light); color: #7a5510;
+    border-radius: 4px; padding: 3px 10px;
+    margin-bottom: 20px;
+  }
+  .service-num {
+    font-family: var(--ff-display);
+    font-size: 48px; line-height: 1;
+    color: var(--border-strong);
+    margin-bottom: 12px;
+  }
+  .service-card h3 {
+    font-family: var(--ff-display);
+    font-size: 22px; line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .service-card p {
+    font-size: 14px; font-weight: 300;
+    color: var(--ink2); line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .service-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 11px; padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 20px; color: var(--ink3);
+    background: var(--paper2);
+  }
+  .service-card.featured .tag {
+    border-color: rgba(200,146,42,0.3);
+    background: rgba(200,146,42,0.05);
+    color: #7a5510;
+  }
+
+  /* ─── ABOUT ─── */
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
+  }
+  .about-visual {
+    position: relative;
+  }
+  .about-avatar-wrap {
+    width: 100%; aspect-ratio: 1;
+    max-width: 320px; margin: 0 auto;
+    position: relative;
+  }
+  .about-avatar-bg {
+    position: absolute; inset: 10%;
+    background: var(--paper3); border-radius: 50%;
+  }
+  .about-avatar-ring {
+    position: absolute; inset: 0;
+    border: 1px solid var(--border-strong); border-radius: 50%;
+    animation: spin-slow 20s linear infinite;
+  }
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+  .about-avatar-ring::after {
+    content: '';
+    position: absolute; top: -4px; left: calc(50% - 4px);
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold);
+  }
+  .about-initials {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--ff-display); font-size: 72px;
+    color: var(--ink2);
+  }
+  .about-floater {
+    position: absolute;
+    background: var(--paper); border: 1px solid var(--border-strong);
+    border-radius: 10px; padding: 12px 16px;
+    font-size: 12px;
+    box-shadow: 0 2px 16px rgba(15,14,12,0.08);
+  }
+  .about-floater .af-val {
+    font-family: var(--ff-mono); font-size: 16px; font-weight: 500;
+    color: var(--ink); display: block; margin-bottom: 2px;
+  }
+  .about-floater .af-label { color: var(--ink3); }
+  .floater-1 { bottom: 10%; right: -5%; }
+  .floater-2 { top: 15%; left: -5%; }
+  .about-text h2 {
+    font-family: var(--ff-display);
+    font-size: clamp(26px, 3.5vw, 40px);
+    line-height: 1.15; letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  .about-text h2 em { font-style: italic; color: var(--gold); }
+  .about-text p {
+    font-size: 16px; font-weight: 300;
+    color: var(--ink2); line-height: 1.75;
+    margin-bottom: 16px;
+  }
+  .cred-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-top: 28px;
+  }
+  .cred-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--paper2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px;
+    font-size: 13px;
+  }
+  .cred-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+  .cred-label { font-weight: 500; color: var(--ink); line-height: 1.3; }
+  .cred-sub { font-size: 11px; color: var(--ink3); }
+
+  /* ─── EDUCATION ─── */
+  .edu-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+  }
+  .edu-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    display: flex; flex-direction: column;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    text-decoration: none; color: inherit;
+  }
+  .edu-card:hover {
+    border-color: var(--border-strong);
+    box-shadow: 0 4px 20px rgba(15,14,12,0.07);
+    transform: translateY(-2px);
+  }
+  .edu-type-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.08em;
+    color: var(--ink3);
+    background: var(--paper2); border-radius: 4px; padding: 3px 10px;
+    margin-bottom: 16px; align-self: flex-start;
+  }
+  .edu-card h3 {
+    font-family: var(--ff-display);
+    font-size: 20px; line-height: 1.3;
+    margin-bottom: 10px; flex: 1;
+  }
+  .edu-card p {
+    font-size: 14px; font-weight: 300;
+    color: var(--ink2); line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .edu-link {
+    font-size: 13px; font-weight: 500; color: var(--gold);
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  /* ─── ALGO SAAS ─── */
+  .saas-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+  }
+  .saas-text h2 {
+    font-family: var(--ff-display);
+    font-size: clamp(26px, 3.5vw, 40px);
+    line-height: 1.15; letter-spacing: -0.02em;
+    color: var(--paper);
+    margin-top: 10px; margin-bottom: 18px;
+  }
+  .saas-text h2 em { font-style: italic; color: var(--gold-light); }
+  .saas-text p {
+    font-size: 16px; font-weight: 300;
+    color: rgba(250,248,244,0.65); line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .feature-list { list-style: none; margin-bottom: 32px; }
+  .feature-list li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: rgba(250,248,244,0.8);
+    padding: 8px 0; border-bottom: 1px solid rgba(250,248,244,0.08);
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-check {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(26,107,90,0.4); border: 1px solid var(--teal);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #6ee7c7; flex-shrink: 0;
+  }
+  .btn-waitlist {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--ff-body); font-size: 15px; font-weight: 500;
+    background: var(--gold); color: var(--ink);
+    border: none; border-radius: 6px;
+    padding: 14px 28px; cursor: pointer; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-waitlist:hover { background: var(--gold-light); transform: translateY(-1px); }
+  /* dashboard mockup */
+  .dashboard {
+    background: rgba(250,248,244,0.04);
+    border: 1px solid rgba(250,248,244,0.12);
+    border-radius: 16px; padding: 24px;
+  }
+  .dash-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px; border-bottom: 1px solid rgba(250,248,244,0.08);
+  }
+  .dash-title {
+    font-family: var(--ff-mono); font-size: 12px;
+    color: rgba(250,248,244,0.5); letter-spacing: 0.06em;
+  }
+  .dash-status {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--ff-mono); font-size: 11px; color: #6ee7c7;
+  }
+  .dash-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #6ee7c7;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+  .strategy-row {
+    display: grid; grid-template-columns: 1fr auto auto;
+    align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid rgba(250,248,244,0.06);
+    font-size: 13px;
+  }
+  .strategy-row:last-of-type { border-bottom: none; }
+  .s-name { color: rgba(250,248,244,0.8); font-weight: 500; }
+  .s-sub { color: rgba(250,248,244,0.4); font-size: 11px; margin-top: 2px; }
+  .s-state {
+    font-family: var(--ff-mono); font-size: 11px;
+    padding: 3px 8px; border-radius: 4px;
+  }
+  .s-state.active { background: rgba(26,107,90,0.3); color: #6ee7c7; }
+  .s-state.watch { background: rgba(200,146,42,0.2); color: var(--gold-light); }
+  .s-state.idle { background: rgba(250,248,244,0.07); color: rgba(250,248,244,0.4); }
+  .s-pnl {
+    font-family: var(--ff-mono); font-size: 13px;
+  }
+  .s-pnl.up { color: #6ee7c7; }
+  .s-pnl.down { color: #f08080; }
+  .dash-summary {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-top: 20px;
+    padding-top: 20px; border-top: 1px solid rgba(250,248,244,0.08);
+  }
+  .dash-metric { }
+  .dm-label { font-size: 11px; color: rgba(250,248,244,0.4); margin-bottom: 4px; font-family: var(--ff-mono); letter-spacing: 0.06em; }
+  .dm-val { font-family: var(--ff-mono); font-size: 18px; font-weight: 500; color: var(--paper); }
+  .dm-val.up { color: #6ee7c7; }
+
+  /* ─── CONSULT CTA ─── */
+  .consult-section { text-align: center; }
+  .consult-section h2 {
+    font-family: var(--ff-display);
+    font-size: clamp(30px, 4.5vw, 54px);
+    line-height: 1.1; letter-spacing: -0.02em;
+    margin: 14px 0 18px;
+  }
+  .consult-section h2 em { font-style: italic; color: var(--gold); }
+  .consult-section > .container > p {
+    font-size: 17px; font-weight: 300;
+    color: var(--ink2); max-width: 500px; margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+  .consult-pills {
+    display: flex; gap: 10px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 40px;
+  }
+  .consult-pill {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 14px; color: var(--ink2);
+    background: var(--paper2); border: 1px solid var(--border);
+    border-radius: 100px; padding: 9px 20px;
+  }
+  .consult-pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+  .big-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--ff-body); font-size: 17px; font-weight: 500;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 8px;
+    padding: 18px 40px; cursor: pointer; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    margin-bottom: 16px;
+  }
+  .big-cta:hover { background: var(--ink2); transform: translateY(-2px); }
+  .cta-note { font-size: 13px; color: var(--ink3); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--ink);
+    color: rgba(250,248,244,0.6);
+    padding: 48px 0 32px;
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px; margin-bottom: 48px;
+  }
+  .footer-brand .footer-logo {
+    font-family: var(--ff-display);
+    font-size: 22px; color: var(--paper);
+    display: block; margin-bottom: 12px;
+    text-decoration: none;
+  }
+  .footer-brand .footer-logo em { font-style: italic; color: var(--gold-light); }
+  .footer-brand p { font-size: 13px; line-height: 1.6; max-width: 220px; }
+  .footer-col h4 {
+    font-size: 12px; font-weight: 500; color: var(--paper);
+    font-family: var(--ff-mono); letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul li a {
+    font-size: 14px; color: rgba(250,248,244,0.55);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-col ul li a:hover { color: var(--paper); }
+  .footer-bottom {
+    padding-top: 24px; border-top: 1px solid rgba(250,248,244,0.08);
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 20px; flex-wrap: wrap;
+  }
+  .footer-disc { font-size: 11px; line-height: 1.6; max-width: 560px; }
+  .footer-copy { font-size: 12px; color: rgba(250,248,244,0.3); white-space: nowrap; }
+
+  /* ─── MOBILE NAV ─── */
+  .mobile-menu {
+    display: none; position: fixed; inset: 0; z-index: 99;
+    background: var(--paper);
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 32px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: var(--ff-display); font-size: 32px;
+    color: var(--ink); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--gold); }
+  .mobile-menu .close-btn {
+    position: absolute; top: 20px; right: 24px;
+    background: none; border: none; font-size: 28px; cursor: pointer; color: var(--ink);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-card { display: none; }
+    .services-grid { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; }
+    .about-visual { display: none; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .saas-grid { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+  }
+  @media (max-width: 600px) {
+    .footer-top { grid-template-columns: 1fr; }
+    .cred-grid { grid-template-columns: 1fr; }
+    section { padding: 60px 0; }
+  }
+
+  /* ─── CALENDLY MODAL ─── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(15,14,12,0.7);
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--paper);
+    border-radius: 16px; padding: 40px;
+    max-width: 480px; width: 100%;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(15,14,12,0.3);
+    animation: modal-in 0.3s var(--ease);
+  }
+  @keyframes modal-in {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; font-size: 22px;
+    color: var(--ink3); cursor: pointer;
+  }
+  .modal-box h3 {
+    font-family: var(--ff-display); font-size: 26px;
+    margin-bottom: 8px;
+  }
+  .modal-box h3 em { font-style: italic; color: var(--gold); }
+  .modal-box p { font-size: 14px; color: var(--ink2); margin-bottom: 28px; line-height: 1.6; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 11px 14px;
+    background: var(--paper2); border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    font-family: var(--ff-body); font-size: 14px; color: var(--ink);
+    outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--gold);
+  }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .form-submit {
+    width: 100%; padding: 14px;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 6px;
+    font-family: var(--ff-body); font-size: 15px; font-weight: 500;
+    cursor: pointer; margin-top: 8px;
+    transition: background 0.2s;
+  }
+  .form-submit:hover { background: var(--ink2); }
+  .form-note { font-size: 12px; color: var(--ink3); text-align: center; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Navigation menu">
+  <button class="close-btn" onclick="closeMobileMenu()" aria-label="Close menu">×</button>
+  <a href="#services" onclick="closeMobileMenu()">Services</a>
+  <a href="#about" onclick="closeMobileMenu()">About</a>
+  <a href="#learn" onclick="closeMobileMenu()">Learn</a>
+  <a href="#algo" onclick="closeMobileMenu()">Algo Platform</a>
+  <a href="#" onclick="closeMobileMenu(); openModal();">Book a call</a>
+</div>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="bookingModal" role="dialog" aria-modal="true" aria-label="Book a consultation">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+    <h3>Book a <em>free</em> call</h3>
+    <p>30 minutes. No sales pitch. We'll understand your goals and suggest the right path forward.</p>
+    <div class="form-group">
+      <label for="f-name">Your name</label>
+      <input type="text" id="f-name" placeholder="Arjun Sharma">
+    </div>
+    <div class="form-group">
+      <label for="f-email">Email address</label>
+      <input type="email" id="f-email" placeholder="arjun@example.com">
+    </div>
+    <div class="form-group">
+      <label for="f-interest">What are you interested in?</label>
+      <select id="f-interest">
+        <option value="">Select one...</option>
+        <option>Mutual fund portfolio advisory</option>
+        <option>Options trading education</option>
+        <option>Algo platform early access</option>
+        <option>All of the above</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="f-msg">Anything specific on your mind? (optional)</label>
+      <textarea id="f-msg" placeholder="e.g. I trade Nifty options and want to understand risk management better..."></textarea>
+    </div>
+    <button class="form-submit" onclick="submitForm()">Request a slot →</button>
+    <p class="form-note">We'll respond within 24 hours with a calendar link.</p>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">options<em>for</em>quants</a>
+    <ul class="nav-links" role="list">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#learn">Learn</a></li>
+      <li><a href="#algo">Algo Platform</a></li>
+    </ul>
+    <a href="#" class="nav-cta" onclick="openModal(); return false;">Book a call</a>
+    <button class="hamburger" onclick="openMobileMenu()" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-line"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        <span class="label">Quant Finance · Options · Algo Trading</span>
+      </div>
+      <h1>
+        Investing and trading,<br>
+        built on <em>quant</em> principles
+      </h1>
+      <p class="hero-sub">
+        Wealth advisory for goal-based investors. Education for serious options traders. An algo platform for systematic strategies. One expert — three ways to grow.
+      </p>
+      <div class="hero-ctas">
+        <a href="#" class="btn-primary" onclick="openModal(); return false;">
+          Book a free consultation
+          <span>→</span>
+        </a>
+        <a href="#algo" class="btn-outline">
+          Explore algo platform
+          <span>↓</span>
+        </a>
+      </div>
+      <div class="trust-strip">
+        <div class="trust-item">
+          <div class="trust-icon">✓</div>
+          AMFI Registered ARN
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">✓</div>
+          SEBI RIA (in progress)
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">✓</div>
+          10+ yrs derivatives experience
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">✓</div>
+          NSE & MCX active trader
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-card">
+        <div class="card-header">
+          <span class="card-title">Strategy monitor</span>
+          <span class="live-badge"><span class="live-dot"></span>Live</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Nifty Long Straddle</span>
+          <span class="metric-val up">Active ↑</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">MCX Crude Spread</span>
+          <span class="metric-val watch">Watching</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Signal confidence</span>
+          <span class="metric-val">74%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Kalman filter state</span>
+          <span class="metric-val up">Trending</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Portfolio Theta / day</span>
+          <span class="metric-val">₹ −420</span>
+        </div>
+        <div class="card-footer">
+          <button class="card-cta" onclick="openModal()">Get early access →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="label">What we offer</div>
+      <h2>Three ways to<br>work with us</h2>
+      <p>Whether you're building long-term wealth, sharpening your options edge, or automating your strategies — we have a path for you.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-num">01</div>
+        <h3>Wealth advisory</h3>
+        <p>Goal-based mutual fund portfolios constructed with a quant lens. AMFI-registered distributor. Fiduciary approach with full fee transparency.</p>
+        <div class="service-tags">
+          <span class="tag">Mutual funds</span>
+          <span class="tag">Goal planning</span>
+          <span class="tag">AMFI registered</span>
+          <span class="tag">Trail commission disclosed</span>
+        </div>
+      </div>
+      <div class="service-card featured reveal reveal-delay-2">
+        <div class="service-badge">Core offering</div>
+        <div class="service-num">02</div>
+        <h3>Options education</h3>
+        <p>Structured learning for serious F&O traders. From Greeks and volatility surfaces to expiry-day management and risk frameworks — taught by a practitioner.</p>
+        <div class="service-tags">
+          <span class="tag">Options Greeks</span>
+          <span class="tag">Volatility surfaces</span>
+          <span class="tag">Expiry management</span>
+          <span class="tag">MCX commodities</span>
+        </div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-num">03</div>
+        <h3>Algo SaaS platform</h3>
+        <p>Systematic strategy execution for Nifty and MCX. Long Straddle and Long Spread agents with adaptive signal filtering via Kalman filter and regime detection.</p>
+        <div class="service-tags">
+          <span class="tag">Kite Connect</span>
+          <span class="tag">Long Straddle</span>
+          <span class="tag">Walk-forward tested</span>
+          <span class="tag">Early access</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="alt" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-avatar-wrap">
+          <div class="about-avatar-bg"></div>
+          <div class="about-avatar-ring"></div>
+          <div class="about-initials">N</div>
+          <div class="about-floater floater-1">
+            <span class="af-val">10+ yrs</span>
+            <span class="af-label">Derivatives exp.</span>
+          </div>
+          <div class="about-floater floater-2">
+            <span class="af-val">FVA · PVA · IPV</span>
+            <span class="af-label">Sell-side expertise</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-text reveal reveal-delay-1">
+        <div class="label">Who is behind this</div>
+        <h2>A quant finance professional turned <em>educator</em> and entrepreneur</h2>
+        <p>A decade spent building and validating derivatives pricing models at a global bank — covering FVA, PVA, IPV, and model risk management (SR 11-7, IFRS 13, FRTB).</p>
+        <p>Now channelling that institutional quant experience into accessible advisory, structured education, and systematic trading technology for individual investors and traders.</p>
+        <div class="cred-grid">
+          <div class="cred-item">
+            <span class="cred-icon">⚙</span>
+            <div>
+              <div class="cred-label">Derivatives pricing</div>
+              <div class="cred-sub">FVA, PVA, XVA, model risk</div>
+            </div>
+          </div>
+          <div class="cred-item">
+            <span class="cred-icon">📊</span>
+            <div>
+              <div class="cred-label">Active NSE F&O trader</div>
+              <div class="cred-sub">Nifty options, expiry mgmt</div>
+            </div>
+          </div>
+          <div class="cred-item">
+            <span class="cred-icon">🛢</span>
+            <div>
+              <div class="cred-label">MCX commodities</div>
+              <div class="cred-sub">Crude oil options, straddles</div>
+            </div>
+          </div>
+          <div class="cred-item">
+            <span class="cred-icon">✦</span>
+            <div>
+              <div class="cred-label">AMFI ARN holder</div>
+              <div class="cred-sub">Active MFD, trail commission</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="learn">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="label">Learn with us</div>
+      <h2>Education built by<br>a practitioner</h2>
+      <p>Not theory for its own sake — every concept is grounded in live market experience across NSE F&O and MCX commodity options.</p>
+    </div>
+    <div class="edu-grid">
+      <a href="#" class="edu-card reveal reveal-delay-1">
+        <span class="edu-type-badge">📘 Course</span>
+        <h3>Options trading from first principles</h3>
+        <p>A structured curriculum covering payoff diagrams, Greeks, vol surfaces, and strategy selection — from beginner to practitioner level.</p>
+        <span class="edu-link">Explore course →</span>
+      </a>
+      <a href="#" class="edu-card reveal reveal-delay-2">
+        <span class="edu-type-badge">✍ Blog</span>
+        <h3>Understanding Vega in a volatile market</h3>
+        <p>Why Vega exposure matters more than Delta on high-IV days, and how to position your book accordingly.</p>
+        <span class="edu-link">Read article →</span>
+      </a>
+      <a href="#" class="edu-card reveal reveal-delay-3">
+        <span class="edu-type-badge">▶ Video</span>
+        <h3>Expiry-day Nifty straddle: live trade walkthrough</h3>
+        <p>A real expiry-day position breakdown — entry logic, adjustments, and exit — with P&L analysis.</p>
+        <span class="edu-link">Watch now →</span>
+      </a>
+      <a href="#" class="edu-card reveal reveal-delay-3">
+        <span class="edu-type-badge">📄 Guide</span>
+        <h3>MCX crude oil options: a practical primer</h3>
+        <p>Black-76 pricing, vol surface construction, MCX microstructure, and Greeks management for commodity options traders.</p>
+        <span class="edu-link">Download guide →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ALGO SAAS -->
+<section class="dark" id="algo">
+  <div class="container">
+    <div class="saas-grid">
+      <div class="saas-text reveal">
+        <div class="label" style="color:rgba(250,248,244,0.4)">Algo platform</div>
+        <h2>Systematic strategy execution, <em>automated</em></h2>
+        <p>Built on Kite Connect (Zerodha). Adaptive Kalman filter signal processing. Walk-forward validated. Designed for Indian F&O and MCX markets.</p>
+        <ul class="feature-list">
+          <li><span class="feature-check">✓</span>Long Straddle and Long Spread strategy agents</li>
+          <li><span class="feature-check">✓</span>Adaptive Kalman filter for dynamic signal quality</li>
+          <li><span class="feature-check">✓</span>Regime detection and directional confidence gate</li>
+          <li><span class="feature-check">✓</span>Walk-forward validated — no curve fitting</li>
+          <li><span class="feature-check">✓</span>Portfolio-level Greek aggregation</li>
+          <li><span class="feature-check">✓</span>Nifty options and MCX crude oil</li>
+        </ul>
+        <a href="#" class="btn-waitlist" onclick="openModal(); return false;">
+          Join early access waitlist →
+        </a>
+      </div>
+      <div class="dashboard reveal reveal-delay-2">
+        <div class="dash-header">
+          <span class="dash-title">STRATEGY DASHBOARD</span>
+          <span class="dash-status"><span class="dash-dot"></span>Systems running</span>
+        </div>
+        <div class="strategy-row">
+          <div>
+            <div class="s-name">Nifty Long Straddle</div>
+            <div class="s-sub">ATM · Weekly expiry</div>
+          </div>
+          <span class="s-state active">ACTIVE</span>
+          <span class="s-pnl up">+₹4,280</span>
+        </div>
+        <div class="strategy-row">
+          <div>
+            <div class="s-name">MCX Crude Spread</div>
+            <div class="s-sub">OTM · Rolling</div>
+          </div>
+          <span class="s-state watch">WATCH</span>
+          <span class="s-pnl up">+₹1,140</span>
+        </div>
+        <div class="strategy-row">
+          <div>
+            <div class="s-name">BankNifty Strangle</div>
+            <div class="s-sub">Wide wings · Expiry -2d</div>
+          </div>
+          <span class="s-state idle">IDLE</span>
+          <span class="s-pnl" style="color:rgba(250,248,244,0.3)">—</span>
+        </div>
+        <div class="dash-summary">
+          <div class="dash-metric">
+            <div class="dm-label">NET P&L TODAY</div>
+            <div class="dm-val up">+₹5,420</div>
+          </div>
+          <div class="dash-metric">
+            <div class="dm-label">SIGNAL CONFIDENCE</div>
+            <div class="dm-val">74%</div>
+          </div>
+          <div class="dash-metric">
+            <div class="dm-label">THETA / DAY</div>
+            <div class="dm-val" style="color:rgba(250,248,244,0.6)">₹−620</div>
+          </div>
+          <div class="dash-metric">
+            <div class="dm-label">KALMAN STATE</div>
+            <div class="dm-val up">TRENDING</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONSULT CTA -->
+<section id="contact" class="consult-section">
+  <div class="container">
+    <div class="section-head reveal" style="text-align:center">
+      <div class="label">Work with us</div>
+      <h2>Not sure where<br>to <em>start</em>?</h2>
+      <p>Book a free 30-minute call. We'll understand your goals and point you to the right service — no pressure, no sales pitch.</p>
+    </div>
+    <div class="consult-pills reveal reveal-delay-1">
+      <div class="consult-pill"><span class="consult-pill-dot"></span>Mutual fund portfolio review</div>
+      <div class="consult-pill"><span class="consult-pill-dot"></span>Options trading guidance</div>
+      <div class="consult-pill"><span class="consult-pill-dot"></span>Algo platform demo</div>
+      <div class="consult-pill"><span class="consult-pill-dot"></span>SEBI RIA advisory</div>
+    </div>
+    <div style="text-align:center" class="reveal reveal-delay-2">
+      <a href="#" class="big-cta" onclick="openModal(); return false;">
+        Book a free 30-min call →
+      </a>
+      <div class="cta-note">We respond within 24 hours · No spam ever</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="footer-logo">options<em>for</em>quants</a>
+        <p>Quant-grade financial services for discerning investors and traders. Pune, India.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Wealth advisory</a></li>
+          <li><a href="#learn">Options education</a></li>
+          <li><a href="#algo">Algo platform</a></li>
+          <li><a href="#contact">Book a call</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="#">Options courses</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Videos</a></li>
+          <li><a href="#">Free guides</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Topmate</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-disc">
+        AMFI Registered Mutual Fund Distributor. ARN active. SEBI RIA registration in progress. All educational content is for informational purposes only and does not constitute investment advice. Options and F&O trading involves significant risk of loss. Past performance is not indicative of future results. Please read all scheme-related documents carefully. We earn trail commission on mutual fund investments — disclosed to clients at the time of investment.
+      </p>
+      <span class="footer-copy">© 2025 OptionsForQuants</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ─── SCROLL REVEAL ─── */
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  /* ─── MOBILE MENU ─── */
+  function openMobileMenu() {
+    document.getElementById('mobileMenu').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  /* ─── BOOKING MODAL ─── */
+  function openModal() {
+    document.getElementById('bookingModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('bookingModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('bookingModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  function submitForm() {
+    const name = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    const interest = document.getElementById('f-interest').value;
+    if (!name || !email || !interest) {
+      alert('Please fill in your name, email and area of interest.');
+      return;
+    }
+    const btn = document.querySelector('.form-submit');
+    btn.textContent = 'Submitted! We\'ll be in touch within 24hrs ✓';
+    btn.style.background = '#1a6b5a';
+    btn.disabled = true;
+    setTimeout(closeModal, 2500);
+  }
+
+  /* ─── LIVE DASHBOARD TICKER ─── */
+  const pnlEl = document.querySelector('.dm-val.up');
+  let pnl = 5420;
+  setInterval(() => {
+    pnl += Math.floor((Math.random() - 0.4) * 80);
+    if (pnlEl) pnlEl.textContent = (pnl >= 0 ? '+' : '') + '₹' + pnl.toLocaleString('en-IN');
+  }, 3000);
+
+  /* ─── NAV ACTIVE SCROLL ─── */
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--ink)' : '';
+      a.style.fontWeight = a.getAttribute('href') === '#' + current ? '500' : '';
+    });
+  });
+</script>
+</body>
+</html>
