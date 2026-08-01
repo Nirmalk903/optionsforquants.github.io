@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Volatility Clock — Intraday IV Behaviour | Options for Quants</title>
+<meta name="description" content="A study of intraday implied-volatility behaviour across the trading day: the end-of-day IV crush, the MCX US-open deflation, and time-of-day patterns for NSE, BSE and MCX options.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f4; --surface:#ffffff; --surface-2:#f4f1ea; --border:#e6ded0;
+  --ink:#0f0e0c; --muted:#5f574a; --faint:#938a79;
+  --accent:#c8922a; --crush:#c0392b; --expand:#1a6b5a;
+  --grid:#ece5d8; --zero:#c3b79f;
+  --shadow:0 1px 2px rgba(15,14,12,.05),0 10px 30px rgba(15,14,12,.06);
+  --mono:"DM Mono",ui-monospace,Menlo,Consolas,monospace;
+  --sans:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --display:"DM Serif Display",Georgia,serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1140px;margin:0 auto;padding:clamp(20px,4vw,56px)}
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);font-weight:600}
+h1{font-family:var(--display);font-weight:750;letter-spacing:-.02em;
+  font-size:clamp(30px,5.4vw,54px);line-height:1.02;margin:.28em 0 .18em;
+  text-wrap:balance}
+.lede{font-size:clamp(16px,2vw,19px);color:var(--muted);max-width:60ch;
+  margin:0 0 1.5em}
+.lede b{color:var(--ink);font-weight:650}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);
+  font-size:12.5px;color:var(--faint);border-top:1px solid var(--border);
+  padding-top:14px}
+.meta b{color:var(--muted);font-weight:600}
+
+section{margin-top:clamp(40px,6vw,72px)}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:20px;
+  flex-wrap:wrap}
+.sec-head h2{font-size:clamp(20px,2.6vw,26px);font-weight:700;margin:0;
+  letter-spacing:-.01em}
+.sec-head .tag{font-family:var(--mono);font-size:11.5px;color:var(--faint);
+  letter-spacing:.04em}
+.rule{height:1px;background:var(--border);margin:0 0 4px}
+
+/* signal cards */
+.signals{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:16px}
+.signal{background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:20px 20px 18px;box-shadow:var(--shadow);
+  position:relative;overflow:hidden}
+.signal::before{content:"";position:absolute;inset:0 auto 0 0;width:3px}
+.signal.crush::before{background:var(--crush)}
+.signal.defl::before{background:var(--accent)}
+.signal.null::before{background:var(--zero)}
+.signal .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint)}
+.signal .big{font-size:clamp(22px,3vw,28px);font-weight:700;margin:.15em 0 .1em;
+  letter-spacing:-.01em;line-height:1.1}
+.signal.crush .big{color:var(--crush)}
+.signal.defl .big{color:var(--accent)}
+.signal p{margin:.3em 0 0;font-size:13.5px;color:var(--muted)}
+
+/* symbol grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+  gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:16px 16px 14px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:10px}
+.card-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.sym{font-family:var(--mono);font-weight:700;font-size:16px;letter-spacing:.02em}
+.fam{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+  padding:2px 7px;border-radius:999px;border:1px solid var(--border);
+  color:var(--faint)}
+.card-sub{font-family:var(--mono);font-size:11px;color:var(--faint);
+  margin-top:-4px}
+canvas{width:100%;height:118px;display:block}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+.stat{background:var(--surface-2);border:1px solid var(--border);
+  border-radius:9px;padding:8px 10px}
+.stat .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--faint);display:flex;
+  justify-content:space-between;align-items:center;gap:4px}
+.stat .val{font-family:var(--mono);font-size:17px;font-weight:700;
+  font-variant-numeric:tabular-nums;margin-top:2px}
+.stat .val small{font-size:11px;font-weight:500;color:var(--muted)}
+.neg{color:var(--crush)} .pos{color:var(--expand)} .flat{color:var(--muted)}
+.chip{font-family:var(--mono);font-size:9px;letter-spacing:.05em;
+  padding:1px 5px;border-radius:4px;font-weight:600;text-transform:uppercase}
+.chip.sig{background:color-mix(in srgb,var(--crush) 18%,transparent);
+  color:var(--crush)}
+.chip.ok{background:color-mix(in srgb,var(--expand) 18%,transparent);
+  color:var(--expand)}
+.chip.no{background:var(--surface);color:var(--faint);
+  border:1px solid var(--border)}
+
+/* guardrails */
+.rails{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:14px}
+.rail{border:1px solid var(--border);border-radius:12px;padding:16px 18px;
+  background:var(--surface)}
+.rail h3{margin:0 0 6px;font-size:15.5px;font-family:var(--mono);
+  display:flex;align-items:center;gap:8px}
+.rail .dot{width:8px;height:8px;border-radius:2px;flex:none}
+.rail p{margin:0;font-size:14px;color:var(--muted)}
+.rail .verdict{font-family:var(--mono);font-size:11px;letter-spacing:.05em;
+  text-transform:uppercase;margin-top:8px;color:var(--faint)}
+
+.legend{display:flex;flex-wrap:wrap;gap:14px 22px;font-family:var(--mono);
+  font-size:11.5px;color:var(--muted);margin-bottom:8px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.legend .sw{width:13px;height:13px;border-radius:3px;opacity:.55}
+
+.method{border-top:1px solid var(--border);margin-top:56px;padding-top:22px;
+  color:var(--muted);font-size:13.5px;max-width:76ch}
+.method b{color:var(--ink)}
+.method ul{padding-left:18px;margin:.5em 0}
+.method li{margin:.3em 0}
+.foot{font-family:var(--mono);font-size:11px;color:var(--faint);
+  margin-top:26px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Options for Quants · Volatility Research</div>
+    <h1>The Volatility Clock</h1>
+    <p class="lede">Implied vol is not flat across the trading day. Read from
+      the tape of every symbol, one pattern dominates: <b>ATM IV bleeds into
+      the close — everywhere</b>, and a long straddle held through the last
+      hour reliably loses. Two secondary rhythms and one non-event round it out.</p>
+    <div class="meta">
+      <span><b>Series</b> canonical 5-min ATM IV</span>
+      <span><b>Window</b> 2026-03-23 → 07-31</span>
+      <span><b>Coverage</b> 49–56 days / symbol</span>
+      <span><b>Regime</b> single (falling vol)</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="signals">
+      <div class="signal crush">
+        <div class="k">The dominant pattern</div>
+        <div class="big">End-of-day crush</div>
+        <p>Last-hour IV falls on 67–76% of days. A long straddle held through
+          it loses <b>−2.7% to −6.2%</b>, profitable only 24–40% of the time —
+          significant on 7 of 9 symbols.</p>
+      </div>
+      <div class="signal defl">
+        <div class="k">MCX evening</div>
+        <div class="big">US open deflates</div>
+        <p>When US equities open (~18:45 IST) MCX IV <b>falls</b>, not spikes —
+          GOLDM down 80% of days, crude 71–72%. The pre-open risk resolves.
+          Not a long-vol entry.</p>
+      </div>
+      <div class="signal null">
+        <div class="k">A non-event</div>
+        <div class="big">Europe open · flat</div>
+        <p>The NSE afternoon shows <b>no systematic IV response</b> to the
+          European open. A useful null — there is nothing here to trade or to
+          build a rule around.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>NSE / BSE index vol</h2>
+      <span class="tag">09:15 – 15:30 IST · normalised to each day's median</span>
+    </div>
+    <div class="rule"></div>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i> intraday IV shape (% vs day median)</span>
+      <span><span class="sw" style="background:var(--crush)"></span> last-hour crush zone</span>
+      <span><span class="sw" style="background:var(--accent)"></span> US-open zone (MCX)</span>
+      <span class="mono">— zero = day's typical level</span>
+    </div>
+    <div class="grid" id="nse"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>MCX commodity vol</h2>
+      <span class="tag">09:00 – 23:30 IST · US session runs through the evening</span>
+    </div>
+    <div class="rule"></div>
+    <div class="grid" id="mcx"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>What to do with it</h2>
+      <span class="tag">proposed guardrails · shadow-first</span></div>
+    <div class="rule"></div>
+    <div class="rails">
+      <div class="rail">
+        <h3><span class="dot" style="background:var(--crush)"></span>Don't buy premium late</h3>
+        <p>Block or discourage new long-premium entries in the last hour
+          (all symbols). The IV crush plus theta overwhelms gamma — the held
+          straddle loses on 60–76% of days.</p>
+        <div class="verdict">A time-of-day entry filter</div>
+      </div>
+      <div class="rail">
+        <h3><span class="dot" style="background:var(--accent)"></span>Skip the MCX US open for longs</h3>
+        <p>18:45–19:15 IST is a vol-deflation window, not an expansion one.
+          A long straddle into it loses on crude, gold and crude-mini. Wait
+          for the deflation to pass or trade the other side.</p>
+        <div class="verdict">Consistent with event-window analysis</div>
+      </div>
+      <div class="rail">
+        <h3><span class="dot" style="background:var(--expand)"></span>The last hour favours the seller</h3>
+        <p>The same crush that punishes buyers is a theta-capture window for
+          short premium — subject to the gamma tail on the 24–40% of days
+          price does move. Worth a shadow test.</p>
+        <div class="verdict">Candidate — validate before deploying</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="method">
+    <p><b>Method.</b> ATM IV from the canonical 5-min series
+      (a 5-minute ATM-IV series), Brenner approximation,
+      close-anchored DTE, front expiry. Each day is normalised to its own
+      median so the intraday <i>shape</i> is comparable across vol levels.
+      Event windows use per-day log-changes with a 2,000-sample bootstrap
+      95% CI and sign-consistency; the long-straddle P&L fixes the strike
+      and expiry at window entry and marks it to the window's last print.</p>
+    <ul>
+      <li><b>The crush is conservative.</b> Intraday DTE shrink biases the IV
+        approximation <i>upward</i>, so the true end-of-day crush is stronger
+        than shown, not weaker.</li>
+      <li><b>One regime.</b> Apr–Jul 2026 was a falling-vol regime; a rising
+        regime could behave differently.</li>
+      <li><b>Gross of costs.</b> Straddle P&L excludes round-trip cost, which
+        only deepens the case against late long entries.</li>
+      <li><b>Shape is homogeneous.</b> Day-shape clustering found one dominant
+        profile per symbol plus event-day outliers — only crude shows genuine
+        multi-type structure (3 day-types).</li>
+    </ul>
+    <p class="foot">Bootstrap 95% confidence intervals · significance = CI excludes zero · research note, not trading advice</p>
+  </div>
+</div>
+
+<script>
+const DATA = {"NIFTY":{"family":"NSE","n_days":55,"iv_median":15.3,"profile":{"09:00":2.46,"09:30":2.02,"10:00":1.48,"10:30":0.83,"11:00":0.44,"11:30":0.1,"12:00":-0.26,"12:30":-0.49,"13:00":-0.37,"13:30":-0.12,"14:00":-0.01,"14:30":-0.07,"15:00":-1.1},"windows":{"open_15m       (09:15-09:30)":{"mean":-0.39,"lo":-1.16,"hi":0.36,"consist":53.0,"up":47.0,"sig":false},"midday         (11:00-12:30)":{"mean":-0.89,"lo":-2.55,"hi":0.41,"consist":59.0,"up":41.0,"sig":false},"europe_open    (12:30-13:45)":{"mean":0.27,"lo":-0.83,"hi":1.85,"consist":61.0,"up":39.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":-1.42,"lo":-2.3,"hi":-0.57,"consist":67.0,"up":33.0,"sig":true},"last_15m       (15:15-15:30)":{"mean":-0.16,"lo":-0.63,"hi":0.36,"consist":57.0,"up":43.0,"sig":false}},"straddle":{"open_15m       (09:15-09:30)":{"mean":3.0,"lo":-1.55,"hi":10.9,"profit":46.0,"sig":false},"europe_open    (12:30-13:45)":{"mean":-0.55,"lo":-2.6,"hi":1.98,"profit":30.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":-6.17,"lo":-12.92,"hi":-0.39,"profit":35.0,"sig":true}}},"BANKNIFTY":{"family":"NSE","n_days":56,"iv_median":18.36,"profile":{"09:00":1.5,"09:30":0.95,"10:00":0.38,"10:30":0.36,"11:00":0.12,"11:30":0.21,"12:00":0.02,"12:30":0.17,"13:00":-0.4,"13:30":-0.82,"14:00":-0.52,"14:30":-0.15,"15:00":-0.65},"windows":{"open_15m       (09:15-09:30)":{"mean":-1.26,"lo":-2.83,"hi":-0.1,"consist":52.0,"up":48.0,"sig":true},"midday         (11:00-12:30)":{"mean":0.19,"lo":-0.54,"hi":1.09,"consist":60.0,"up":40.0,"sig":false},"europe_open    (12:30-13:45)":{"mean":-1.29,"lo":-3.53,"hi":0.04,"consist":52.0,"up":48.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":-0.87,"lo":-1.45,"hi":-0.34,"consist":71.0,"up":29.0,"sig":true},"last_15m       (15:15-15:30)":{"mean":-0.27,"lo":-0.59,"hi":0.03,"consist":57.0,"up":43.0,"sig":false}},"straddle":{"open_15m       (09:15-09:30)":{"mean":-0.2,"lo":-1.6,"hi":1.0,"profit":57.0,"sig":false},"europe_open    (12:30-13:45)":{"mean":0.2,"lo":-1.32,"hi":2.03,"profit":42.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":-2.74,"lo":-5.6,"hi":-0.97,"profit":30.0,"sig":true}}},"FINNIFTY":{"family":"NSE","n_days":54,"iv_median":19.2,"profile":{"09:00":4.09,"09:30":3.29,"10:00":6.27,"10:30":1.22,"11:00":0.0,"11:30":-1.25,"12:00":-1.6,"12:30":-3.38,"13:00":-2.8,"13:30":-1.45,"14:00":-0.7,"14:30":2.09,"15:00":-0.27},"windows":{"open_15m       (09:15-09:30)":{"mean":1.03,"lo":-1.39,"hi":3.38,"consist":51.0,"up":51.0,"sig":false},"midday         (11:00-12:30)":{"mean":-4.31,"lo":-11.9,"hi":3.37,"consist":51.0,"up":51.0,"sig":false},"europe_open    (12:30-13:45)":{"mean":-1.21,"lo":-7.43,"hi":5.02,"consist":63.0,"up":37.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":0.03,"lo":-2.24,"hi":3.47,"consist":59.0,"up":41.0,"sig":false},"last_15m       (15:15-15:30)":{"mean":-0.43,"lo":-2.03,"hi":1.11,"consist":58.0,"up":42.0,"sig":false}},"straddle":{"open_15m       (09:15-09:30)":{"mean":2.51,"lo":-6.37,"hi":13.25,"profit":36.0,"sig":false},"europe_open    (12:30-13:45)":{"mean":4.01,"lo":-2.05,"hi":12.15,"profit":34.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":-2.94,"lo":-5.51,"hi":-1.1,"profit":25.0,"sig":true}}},"SENSEX":{"family":"NSE","n_days":52,"iv_median":15.18,"profile":{"09:00":2.51,"09:30":-0.38,"10:00":-1.55,"10:30":-0.45,"11:00":-1.26,"11:30":-0.59,"12:00":-0.35,"12:30":1.41,"13:00":1.22,"13:30":0.57,"14:00":1.25,"14:30":1.59,"15:00":0.15,"15:30":0.01},"windows":{"open_15m       (09:15-09:30)":{"mean":-0.52,"lo":-4.53,"hi":3.12,"consist":52.0,"up":52.0,"sig":false},"midday         (11:00-12:30)":{"mean":2.83,"lo":-1.46,"hi":8.14,"consist":53.0,"up":53.0,"sig":false},"europe_open    (12:30-13:45)":{"mean":1.08,"lo":-0.57,"hi":2.96,"consist":54.0,"up":54.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":-1.55,"lo":-3.32,"hi":0.03,"consist":50.0,"up":50.0,"sig":false},"last_15m       (15:15-15:30)":{"mean":-0.27,"lo":-1.17,"hi":0.56,"consist":60.0,"up":60.0,"sig":false}},"straddle":{"open_15m       (09:15-09:30)":{"mean":1.15,"lo":-2.19,"hi":5.38,"profit":41.0,"sig":false},"europe_open    (12:30-13:45)":{"mean":-0.12,"lo":-3.04,"hi":3.33,"profit":37.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":0.11,"lo":-7.78,"hi":8.7,"profit":35.0,"sig":false}}},"MIDCPNIFTY":{"family":"NSE","n_days":55,"iv_median":21.53,"profile":{"09:00":9.54,"09:30":6.18,"10:00":5.44,"10:30":3.42,"11:00":4.16,"11:30":0.02,"12:00":0.14,"12:30":-0.94,"13:00":-1.84,"13:30":-0.87,"14:00":2.06,"14:30":0.82,"15:00":3.81},"windows":{"open_15m       (09:15-09:30)":{"mean":-3.07,"lo":-6.38,"hi":-0.29,"consist":57.0,"up":43.0,"sig":true},"midday         (11:00-12:30)":{"mean":-5.0,"lo":-10.49,"hi":-0.59,"consist":72.0,"up":28.0,"sig":true},"europe_open    (12:30-13:45)":{"mean":0.56,"lo":-3.41,"hi":5.82,"consist":58.0,"up":42.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":1.8,"lo":-0.53,"hi":5.58,"consist":55.0,"up":45.0,"sig":false},"last_15m       (15:15-15:30)":{"mean":0.54,"lo":-0.49,"hi":1.89,"consist":50.0,"up":50.0,"sig":false}},"straddle":{"open_15m       (09:15-09:30)":{"mean":0.17,"lo":-4.5,"hi":5.84,"profit":48.0,"sig":false},"europe_open    (12:30-13:45)":{"mean":-0.48,"lo":-1.5,"hi":0.32,"profit":40.0,"sig":false},"last_hour      (14:30-15:30)":{"mean":-3.51,"lo":-8.49,"hi":-0.11,"profit":40.0,"sig":true}}},"CRUDEOIL":{"family":"MCX","n_days":49,"iv_median":67.19,"profile":{"09:00":-0.42,"09:30":-0.11,"10:00":0.61,"10:30":1.14,"11:00":1.35,"11:30":1.27,"12:00":0.98,"12:30":0.96,"13:00":0.84,"13:30":0.73,"14:00":1.33,"14:30":1.67,"15:00":2.37,"15:30":2.02,"16:00":0.95,"16:30":0.71,"17:00":0.33,"17:30":-0.18,"18:00":-0.64,"18:30":-0.69,"19:00":-1.35,"19:30":-1.22,"20:00":-1.27,"20:30":-1.6,"21:00":-1.75,"21:30":-1.99,"22:00":-2.53,"22:30":-2.43,"23:00":-2.93},"windows":{"us_data        (17:45-18:15)":{"mean":-0.3,"lo":-0.77,"hi":0.15,"consist":55.0,"up":45.0,"sig":false},"us_equity_open (18:45-19:15)":{"mean":-0.83,"lo":-1.51,"hi":-0.27,"consist":71.0,"up":29.0,"sig":true},"evening        (19:15-21:30)":{"mean":-0.59,"lo":-1.57,"hi":0.41,"consist":67.0,"up":33.0,"sig":false},"last_hour      (22:30-23:30)":{"mean":-1.48,"lo":-2.54,"hi":-0.53,"consist":67.0,"up":33.0,"sig":true},"last_15m       (23:15-23:30)":{"mean":-1.13,"lo":-2.0,"hi":-0.47,"consist":71.0,"up":29.0,"sig":true}},"straddle":{"us_equity_open (18:45-19:15)":{"mean":-0.74,"lo":-1.46,"hi":-0.09,"profit":24.0,"sig":true},"last_hour      (22:30-23:30)":{"mean":-3.64,"lo":-8.64,"hi":-0.79,"profit":29.0,"sig":true}}},"GOLDM":{"family":"MCX","n_days":50,"iv_median":21.67,"profile":{"09:00":1.88,"09:30":0.39,"10:00":0.97,"10:30":1.32,"11:00":1.3,"11:30":1.06,"12:00":1.14,"12:30":0.77,"13:00":0.39,"13:30":0.53,"14:00":0.61,"14:30":0.76,"15:00":1.86,"15:30":1.98,"16:00":0.53,"16:30":0.39,"17:00":0.22,"17:30":0.21,"18:00":0.54,"18:30":0.92,"19:00":-0.05,"19:30":-0.43,"20:00":-0.74,"20:30":-0.85,"21:00":-1.23,"21:30":-1.31,"22:00":-0.86,"22:30":0.37,"23:00":-0.26},"windows":{"us_data        (17:45-18:15)":{"mean":0.05,"lo":-0.63,"hi":0.77,"consist":52.0,"up":48.0,"sig":false},"us_equity_open (18:45-19:15)":{"mean":-1.27,"lo":-2.04,"hi":-0.5,"consist":80.0,"up":20.0,"sig":true},"evening        (19:15-21:30)":{"mean":-1.14,"lo":-1.98,"hi":-0.38,"consist":71.0,"up":29.0,"sig":true},"last_hour      (22:30-23:30)":{"mean":-1.56,"lo":-2.48,"hi":-0.65,"consist":74.0,"up":26.0,"sig":true},"last_15m       (23:15-23:30)":{"mean":-1.45,"lo":-2.45,"hi":-0.49,"consist":66.0,"up":34.0,"sig":true}},"straddle":{"us_equity_open (18:45-19:15)":{"mean":-1.07,"lo":-1.86,"hi":-0.26,"profit":33.0,"sig":true},"last_hour      (22:30-23:30)":{"mean":-1.79,"lo":-10.1,"hi":7.81,"profit":24.0,"sig":false}}},"SILVERM":{"family":"MCX","n_days":51,"iv_median":39.26,"profile":{"09:00":1.78,"09:30":1.97,"10:00":1.04,"10:30":2.32,"11:00":3.22,"11:30":1.73,"12:00":1.71,"12:30":1.26,"13:00":0.77,"13:30":0.18,"14:00":-0.65,"14:30":-0.91,"15:00":0.58,"15:30":2.02,"16:00":1.26,"16:30":1.3,"17:00":0.42,"17:30":0.33,"18:00":1.02,"18:30":0.73,"19:00":0.22,"19:30":-0.56,"20:00":-0.04,"20:30":-0.69,"21:00":-2.04,"21:30":-1.67,"22:00":-2.65,"22:30":-2.64,"23:00":-1.8},"windows":{"us_data        (17:45-18:15)":{"mean":-0.0,"lo":-1.83,"hi":1.81,"consist":58.0,"up":58.0,"sig":false},"us_equity_open (18:45-19:15)":{"mean":-0.65,"lo":-2.64,"hi":0.81,"consist":51.0,"up":49.0,"sig":false},"evening        (19:15-21:30)":{"mean":-0.37,"lo":-2.97,"hi":2.43,"consist":66.0,"up":34.0,"sig":false},"last_hour      (22:30-23:30)":{"mean":-0.56,"lo":-2.22,"hi":1.1,"consist":67.0,"up":33.0,"sig":false},"last_15m       (23:15-23:30)":{"mean":-1.66,"lo":-2.99,"hi":-0.56,"consist":76.0,"up":24.0,"sig":true}},"straddle":{"us_equity_open (18:45-19:15)":{"mean":-0.54,"lo":-1.81,"hi":0.51,"profit":30.0,"sig":false},"last_hour      (22:30-23:30)":{"mean":-3.76,"lo":-8.33,"hi":-0.61,"profit":30.0,"sig":true}}},"CRUDEOILM":{"family":"MCX","n_days":50,"iv_median":68.96,"profile":{"09:00":-0.69,"09:30":-0.34,"10:00":0.38,"10:30":0.96,"11:00":1.21,"11:30":1.11,"12:00":0.87,"12:30":0.84,"13:00":0.68,"13:30":0.61,"14:00":1.14,"14:30":1.5,"15:00":2.3,"15:30":2.24,"16:00":1.18,"16:30":0.94,"17:00":0.57,"17:30":0.01,"18:00":-0.52,"18:30":-0.56,"19:00":-1.21,"19:30":-1.16,"20:00":-1.23,"20:30":-1.43,"21:00":-1.55,"21:30":-1.85,"22:00":-2.43,"22:30":-2.48,"23:00":-3.19,"23:30":-7.39},"windows":{"us_data        (17:45-18:15)":{"mean":-0.4,"lo":-0.81,"hi":0.02,"consist":58.0,"up":42.0,"sig":false},"us_equity_open (18:45-19:15)":{"mean":-0.8,"lo":-1.42,"hi":-0.24,"consist":72.0,"up":28.0,"sig":true},"evening        (19:15-21:30)":{"mean":-0.66,"lo":-1.53,"hi":0.31,"consist":64.0,"up":36.0,"sig":false},"last_hour      (22:30-23:30)":{"mean":-2.18,"lo":-3.36,"hi":-1.27,"consist":76.0,"up":24.0,"sig":true},"last_15m       (23:15-23:30)":{"mean":-1.57,"lo":-2.43,"hi":-0.86,"consist":72.0,"up":28.0,"sig":true}},"straddle":{"us_equity_open (18:45-19:15)":{"mean":-0.79,"lo":-1.48,"hi":-0.15,"profit":30.0,"sig":true},"last_hour      (22:30-23:30)":{"mean":-4.22,"lo":-9.32,"hi":-1.43,"profit":24.0,"sig":true}}}};
+
+function trimKey(k){return k.split("(")[0].trim();}
+function pick(obj, name){
+  for(const k in obj){ if(trimKey(k)===name) return obj[k]; }
+  return null;
+}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+function drawProfile(cv, sym){
+  const prof = sym.profile;
+  const times = Object.keys(prof);
+  const mins = times.map(t=>{const[h,m]=t.split(":").map(Number);return h*60+m;});
+  const vals = times.map(t=>prof[t]);
+  const dpr = window.devicePixelRatio||1;
+  const W = cv.clientWidth, H = cv.clientHeight;
+  cv.width = W*dpr; cv.height = H*dpr;
+  const ctx = cv.getContext("2d"); ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,H);
+
+  const padL=6, padR=6, padT=10, padB=14;
+  const x0=Math.min(...mins), x1=Math.max(...mins);
+  let lo=Math.min(...vals,0), hi=Math.max(...vals,0);
+  const span=(hi-lo)||1; lo-=span*0.12; hi+=span*0.12;
+  const X = m => padL + (m-x0)/((x1-x0)||1)*(W-padL-padR);
+  const Y = v => padT + (hi-v)/((hi-lo)||1)*(H-padT-padB);
+
+  const cAccent=css("--accent"), cCrush=css("--crush"), cGrid=css("--grid"),
+        cZero=css("--zero"), cFaint=css("--faint");
+
+  // event zones
+  function zone(a,b,color,alpha){
+    ctx.fillStyle=color; ctx.globalAlpha=alpha;
+    ctx.fillRect(X(a),padT,X(b)-X(a),H-padT-padB); ctx.globalAlpha=1;
+  }
+  const fam=sym.family;
+  if(fam==="NSE"){ zone(14*60+30,15*60+30,cCrush,0.10); }
+  else { zone(18*60+45,19*60+15,cAccent,0.10); zone(22*60+30,23*60+30,cCrush,0.10); }
+
+  // gridlines (horizontal, at 0)
+  ctx.strokeStyle=cGrid; ctx.lineWidth=1;
+  for(let g=1;g<=2;g++){
+    const yy=padT+(H-padT-padB)*g/3;
+    ctx.beginPath();ctx.moveTo(padL,yy);ctx.lineTo(W-padR,yy);ctx.stroke();
+  }
+  // zero line
+  ctx.strokeStyle=cZero; ctx.lineWidth=1.2; ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(padL,Y(0));ctx.lineTo(W-padR,Y(0));ctx.stroke();
+  ctx.setLineDash([]);
+
+  // area fill under curve toward zero
+  const grad=ctx.createLinearGradient(0,padT,0,H-padB);
+  grad.addColorStop(0,cAccent+"44"); grad.addColorStop(1,cAccent+"05");
+  ctx.beginPath();
+  mins.forEach((m,i)=>{i?ctx.lineTo(X(m),Y(vals[i])):ctx.moveTo(X(m),Y(vals[i]));});
+  ctx.lineTo(X(x1),Y(0)); ctx.lineTo(X(x0),Y(0)); ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+
+  // line
+  ctx.beginPath();
+  mins.forEach((m,i)=>{i?ctx.lineTo(X(m),Y(vals[i])):ctx.moveTo(X(m),Y(vals[i]));});
+  ctx.strokeStyle=cAccent; ctx.lineWidth=2; ctx.lineJoin="round"; ctx.stroke();
+
+  // endpoint
+  const lm=mins[mins.length-1], lv=vals[vals.length-1];
+  ctx.beginPath(); ctx.arc(X(lm),Y(lv),3.2,0,7); ctx.fillStyle=cAccent; ctx.fill();
+
+  // time ticks
+  ctx.fillStyle=cFaint; ctx.font="10px ui-monospace,monospace";
+  ctx.textAlign="left"; ctx.fillText(times[0], X(x0), H-3);
+  ctx.textAlign="right"; ctx.fillText(times[times.length-1], X(x1), H-3);
+}
+
+function statHtml(label, m, sub, sig, isProfit){
+  let cls = m<0 ? "neg" : (m>0?"pos":"flat");
+  let chip;
+  if(sig) chip = m<0 ? '<span class="chip sig">signif</span>'
+                     : '<span class="chip ok">signif</span>';
+  else chip = '<span class="chip no">noisy</span>';
+  const sign = m>0?"+":"";
+  return `<div class="stat"><div class="lbl">${label}${chip}</div>
+    <div class="val ${cls}">${sign}${m.toFixed(2)}<small>% ${sub}</small></div></div>`;
+}
+
+function card(name, sym){
+  const isNSE = sym.family==="NSE";
+  const lhStrad = pick(sym.straddle,"last_hour");
+  const lhIV = pick(sym.windows,"last_hour");
+  const usStrad = pick(sym.straddle,"us_equity_open");
+  const usIV = pick(sym.windows,"us_equity_open");
+
+  let s1, s2;
+  // stat 1: last-hour long straddle P&L (the headline)
+  if(lhStrad) s1 = statHtml("Long straddle · last hr", lhStrad.mean,
+      `win ${lhStrad.profit|0}%`, lhStrad.sig);
+  else s1 = `<div class="stat"><div class="lbl">last hr</div><div class="val flat">—</div></div>`;
+  // stat 2: NSE → last-hour IV Δ; MCX → US-open long straddle
+  if(isNSE && lhIV) s2 = statHtml("IV Δ · last hr", lhIV.mean,
+      `${lhIV.consist|0}% dir`, lhIV.sig);
+  else if(!isNSE && usStrad) s2 = statHtml("Long straddle · US open", usStrad.mean,
+      `win ${usStrad.profit|0}%`, usStrad.sig);
+  else if(!isNSE && usIV) s2 = statHtml("IV Δ · US open", usIV.mean,
+      `${usIV.consist|0}% dir`, usIV.sig);
+  else s2 = "";
+
+  const el = document.createElement("div");
+  el.className="card";
+  el.innerHTML = `
+    <div class="card-top"><span class="sym">${name}</span>
+      <span class="fam">${sym.family}</span></div>
+    <div class="card-sub">${sym.n_days} days · median IV ${sym.iv_median}%</div>
+    <canvas></canvas>
+    <div class="stats">${s1}${s2}</div>`;
+  return el;
+}
+
+function render(){
+  const nse=document.getElementById("nse"), mcx=document.getElementById("mcx");
+  nse.innerHTML=""; mcx.innerHTML="";
+  const order=["NIFTY","BANKNIFTY","SENSEX","FINNIFTY","MIDCPNIFTY",
+               "CRUDEOIL","CRUDEOILM","GOLDM","SILVERM"];
+  order.forEach(name=>{
+    const sym=DATA[name]; if(!sym) return;
+    const el=card(name,sym);
+    (sym.family==="NSE"?nse:mcx).appendChild(el);
+  });
+  // draw after layout
+  requestAnimationFrame(()=>{
+    order.forEach(name=>{
+      const sym=DATA[name]; if(!sym) return;
+      const host=[...document.querySelectorAll(".card")].find(
+        c=>c.querySelector(".sym").textContent===name);
+      if(host) drawProfile(host.querySelector("canvas"), sym);
+    });
+  });
+}
+render();
+window.addEventListener("resize",()=>{ clearTimeout(window._rz);
+  window._rz=setTimeout(render,150); });
+// re-render on theme toggle (data-theme stamp) + OS theme change
+new MutationObserver(render).observe(document.documentElement,
+  {attributes:true,attributeFilter:["data-theme"]});
+if(window.matchMedia) matchMedia("(prefers-color-scheme:dark)")
+  .addEventListener("change",render);
+</script>
+</body>
+</html>
