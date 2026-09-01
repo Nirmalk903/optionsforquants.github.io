@@ -131,10 +131,10 @@ a{color:var(--accent)}
       <div class="signal gate">
         <div class="k">Layer 1 · Mandatory event</div>
         <div class="v">CUSUM ≠ 0</div>
-        <p>A signed price-CUSUM (drift threshold k = 0.5σ, reset each
+        <p>A signed price-CUSUM (calibrated drift threshold, reset each
           session) must have fired. No event, no entry — full stop. The rule
           is empirical: every early stop-loss in our live record entered
-          without a trigger. The event <b>latches for 10 cycles</b> so the
+          without a trigger. The event <b>latches for several scan cycles</b> so the
           downstream checks can complete without the trigger expiring
           mid-entry.</p>
       </div>
@@ -143,8 +143,8 @@ a{color:var(--accent)}
         <div class="v">≥ 3 of 4</div>
         <p>Four booleans: the CUSUM event · vol-squeeze momentum positive
           (or a vol-CUSUM breakout, or strictly rising 3 bars) · the Kalman
-          vol filter's own uncertainty above its 75th percentile · vol-of-vol
-          &gt; 1.2× its median. Since the event is already mandatory, this
+          vol filter's own uncertainty above a high percentile of its own
+          history · vol-of-vol elevated versus its median. Since the event is already mandatory, this
           means <b>the trigger plus at least two vol-quality votes</b>: the
           event says <i>something is moving</i>; the votes say <i>the vol
           surface looks pre-expansion, not post</i>.</p>
@@ -167,18 +167,18 @@ a{color:var(--accent)}
           CUSUM just fired or VSM is inflecting up: momentum outruns
           lagging vol metrics.</td></tr>
       <tr><td>VRP</td>
-        <td>IV − RV &gt; 8% → block</td>
+        <td>IV − RV above a calibrated cap → block</td>
         <td>The straddle is priced richer than what the market has actually
           been delivering. Buying expensive vol is how theta wins.</td></tr>
       <tr><td>RV / IV</td>
-        <td>RV<sub>adj</sub> / IV ≥ 1.10 required</td>
+        <td>RV<sub>adj</sub> / IV above a calibrated floor &gt; 1</td>
         <td>The multiplicative version of the same idea — and RV must be
           <b>overnight-adjusted</b> (√(intraday² + gap²)). Intraday
           Parkinson vol misses close-to-open gaps, roughly half of index
           variance; on this gate's first live day the unadjusted ratio
           wrongly blocked every single evaluation.</td></tr>
       <tr><td>IV SKEW</td>
-        <td>|IV<sub>CE</sub> − IV<sub>PE</sub>| / mean &gt; 3% → block</td>
+        <td>|IV<sub>CE</sub> − IV<sub>PE</sub>| / mean above a calibrated cap → block</td>
         <td>Materially different leg IVs mean the market is pricing
           directional drift — the rich leg bleeds faster than the cheap leg
           gains. That's not a pure vol bet any more.</td></tr>
@@ -223,25 +223,26 @@ a{color:var(--accent)}
       <li><b>A sub-target giveback floor.</b> The governor created a dead
         band: peaks below the anchor had no profit exit at all, and live
         specimens round-tripped +2% peaks into full stops. The floor arms
-        once the peak clears 1%, sits at 40% giveback, and requires the
-        breach to persist three consecutive cycles — one wide-bid flicker
-        of a quote cannot fire it. It was validated by replaying every
+        once the peak clears a calibrated bar, gives back a fixed fraction
+        of the peak, and requires the breach to persist for several
+        consecutive cycles — one wide-bid flicker of a quote cannot fire
+        it. It was validated by replaying every
         historical trade's per-cycle P&amp;L path before it touched
         production.</li>
     </ul>
     <div class="tablewrap"><table>
       <tr><th>Exit</th><th>Fires when</th></tr>
-      <tr><td>ADAPTIVE STOP</td><td>loss ≥ max(floor, 2 × entry-IV / √252) —
-        high-IV entries earn wider stops; big swings were priced in</td></tr>
-      <tr><td>DELTA CAP</td><td>||Δ<sub>CE</sub>| − |Δ<sub>PE</sub>|| &gt;
-        0.35 — the straddle has drifted into a directional bet
-        (~68:32 leg split); it no longer is the trade you put on</td></tr>
+      <tr><td>ADAPTIVE STOP</td><td>a hard floor, widened in proportion to the entry IV's implied
+        daily move — high-IV entries earn wider stops; big swings were priced in</td></tr>
+      <tr><td>DELTA CAP</td><td>||Δ<sub>CE</sub>| − |Δ<sub>PE</sub>|| beyond a calibrated cap —
+        the straddle has drifted into a directional bet; it no longer is
+        the trade you put on</td></tr>
       <tr><td>GAMMA LOCK</td><td>|position Δ| over cap while profitable —
         lock the rally before it mean-reverts</td></tr>
       <tr><td>GOVERNOR</td><td>objective anchor reached → bank or ride by
         z-state (the only profit-taker while armed)</td></tr>
-      <tr><td>GIVEBACK FLOOR</td><td>peak ≥ 1%, then 40% giveback,
-        3-cycle confirm</td></tr>
+      <tr><td>GIVEBACK FLOOR</td><td>once the peak clears an arming bar: a fraction-of-peak floor,
+        multi-cycle breach confirm</td></tr>
       <tr><td>VOL CONTRACTION</td><td>squeeze momentum collapses — the
         expansion we bought never came; stop paying theta for it</td></tr>
       <tr><td>STALE / MAX TIME</td><td>no progress — but vetoed if the
@@ -312,8 +313,8 @@ a{color:var(--accent)}
     <div class="rule"></div>
     <div class="method">
       <p><b>Setup.</b> 5-minute bars, five index underlyings, Mar 2025 –
-        Sep 2026 (~363 sessions each). CUSUM: signed price-drift detector,
-        k = 0.5σ, session reset. Kalman: local-level price filter; the
+        Sep 2026 (~363 sessions each). CUSUM: signed price-drift detector with session reset
+        (production calibration withheld). Kalman: local-level price filter; the
         confirmation score blends trigger freshness (full weight ≤ 30 min,
         decaying to zero by 75) with |z| agreement, and a confirmed verdict
         latches 30 minutes against noise. Event study measures signed
@@ -328,9 +329,11 @@ a{color:var(--accent)}
         <li><b>One-and-a-half years, one market.</b> Indian index options,
           a window containing both rising and falling vol — but no
           guarantee of stationarity.</li>
-        <li><b>Thresholds are ours, not universal.</b> The 8% VRP cap, the
-          1.10 RV/IV floor, the 3% skew cap were tuned on our fills and our
-          cost structure; treat them as a template, not gospel.</li>
+        <li><b>Calibrations are withheld.</b> The exact gate values were tuned
+          on our fills and our cost structure and are part of the system's
+          edge; the architecture is the template. The experiment
+          specification for the event study, by contrast, is given in
+          full.</li>
         <li><b>Survivor-free accounting.</b> The 953 events include every
           confirmed signal, not just the ones followed by trades.</li>
       </ul>
