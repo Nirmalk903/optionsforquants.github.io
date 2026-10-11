@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OptionsForQuants — Quant Finance · Options · Algo Trading</title>
-<meta name="description" content="Wealth advisory, options education, and algo trading platform built on quant principles. AMFI registered. Book a free consultation.">
+<title>OptionsForQuants — Quant Finance · Options · Mutual Funds</title>
+<meta name="description" content="Mutual fund distribution (AMFI-registered Mutual Fund Distributor), options education and free volatility research built on quant principles. Book a free consultation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -725,7 +725,7 @@
   <a href="#services" onclick="closeMobileMenu()">Services</a>
   <a href="#about" onclick="closeMobileMenu()">About</a>
   <a href="#learn" onclick="closeMobileMenu()">Learn</a>
-  <a href="#algo" onclick="closeMobileMenu()">Algo Platform</a>
+  <a href="#services" onclick="closeMobileMenu()">Research</a>
   <a href="#" onclick="closeMobileMenu(); openModal();">Book a call</a>
 </div>
 
@@ -747,10 +747,9 @@
       <label for="f-interest">What are you interested in?</label>
       <select id="f-interest">
         <option value="">Select one...</option>
-        <option>Mutual fund portfolio advisory</option>
+        <option>Mutual fund investing (distribution)</option>
         <option>Options trading education</option>
-        <option>Algo platform early access</option>
-        <option>All of the above</option>
+        <option>Both</option>
       </select>
     </div>
     <div class="form-group">
@@ -770,7 +769,6 @@
       <li><a href="#services">Services</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#learn">Learn</a></li>
-      <li><a href="#algo">Algo Platform</a></li>
     </ul>
     <a href="#" class="nav-cta" onclick="openModal(); return false;">Book a call</a>
     <button class="hamburger" onclick="openMobileMenu()" aria-label="Open menu" aria-expanded="false">
@@ -787,33 +785,29 @@
     <div class="hero-left">
       <div class="hero-eyebrow">
         <div class="hero-eyebrow-dot"></div>
-        <span class="label">Quant Finance · Options · Algo Trading</span>
+        <span class="label">Quant Finance · Options · Mutual Funds</span>
       </div>
       <h1>
         Investing and trading,<br>
         built on <em>quant</em> principles
       </h1>
       <p class="hero-sub">
-        Wealth advisory for goal-based investors. Education for serious options traders. An algo platform for systematic strategies. One expert — three ways to grow.
+        Mutual fund distribution for goal-based investors. Education for serious options traders. Free, open research on Indian volatility.
       </p>
       <div class="hero-ctas">
         <a href="#" class="btn-primary" onclick="openModal(); return false;">
           Book a free consultation
           <span>→</span>
         </a>
-        <a href="#algo" class="btn-outline">
-          Explore algo platform
+        <a href="#learn" class="btn-outline">
+          Explore options education
           <span>↓</span>
         </a>
       </div>
       <div class="trust-strip">
         <div class="trust-item">
           <div class="trust-icon">✓</div>
-          AMFI Registered ARN
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon">✓</div>
-          SEBI RIA (in progress)
+          AMFI-registered Mutual Fund Distributor
         </div>
         <div class="trust-item">
           <div class="trust-icon">✓</div>
@@ -828,31 +822,22 @@
     <div class="hero-right">
       <div class="hero-card">
         <div class="card-header">
-          <span class="card-title">Strategy monitor</span>
-          <span class="live-badge"><span class="live-dot"></span>Live</span>
+          <span class="card-title">Free research</span>
         </div>
         <div class="metric-row">
-          <span class="metric-name">Nifty Long Straddle</span>
-          <span class="metric-val up">Active ↑</span>
+          <span class="metric-name"><a href="/research/volatility-clock.html" style="color:inherit;text-decoration:none">The Volatility Clock</a></span>
+          <span class="metric-val">Intraday IV study</span>
         </div>
         <div class="metric-row">
-          <span class="metric-name">MCX Crude Spread</span>
-          <span class="metric-val watch">Watching</span>
+          <span class="metric-name"><a href="/research/straddle-engine.html" style="color:inherit;text-decoration:none">Anatomy of a Straddle Engine</a></span>
+          <span class="metric-val">Architecture note</span>
         </div>
         <div class="metric-row">
-          <span class="metric-name">Signal confidence</span>
-          <span class="metric-val">74%</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-name">Kalman filter state</span>
-          <span class="metric-val up">Trending</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-name">Portfolio Theta / day</span>
-          <span class="metric-val">₹ −420</span>
+          <span class="metric-name">Options education</span>
+          <span class="metric-val">Greeks · vol surfaces · expiry</span>
         </div>
         <div class="card-footer">
-          <button class="card-cta" onclick="openModal()">Get early access →</button>
+          <a class="card-cta" href="/research/volatility-clock.html" style="display:block;text-align:center;text-decoration:none">Read the research →</a>
         </div>
       </div>
     </div>
@@ -865,17 +850,17 @@
     <div class="section-head reveal">
       <div class="label">What we offer</div>
       <h2>Three ways to<br>work with us</h2>
-      <p>Whether you're building long-term wealth, sharpening your options edge, or automating your strategies — we have a path for you.</p>
+      <p>Whether you're building long-term wealth, sharpening your options edge, or digging into how volatility behaves — we have a path for you.</p>
     </div>
     <div class="services-grid">
       <div class="service-card reveal reveal-delay-1">
         <div class="service-num">01</div>
-        <h3>Wealth advisory</h3>
-        <p>Goal-based mutual fund portfolios constructed with a quant lens. AMFI-registered distributor. Fiduciary approach with full fee transparency.</p>
+        <h3>Mutual fund distribution</h3>
+        <p>Goal-based mutual fund investing, with a quant lens on scheme selection. As an AMFI-registered Mutual Fund Distributor, we earn trail commission from the fund house — disclosed in full.</p>
         <div class="service-tags">
           <span class="tag">Mutual funds</span>
-          <span class="tag">Goal planning</span>
-          <span class="tag">AMFI registered</span>
+          <span class="tag">Goal-based investing</span>
+          <span class="tag">AMFI-registered MFD</span>
           <span class="tag">Trail commission disclosed</span>
         </div>
       </div>
@@ -893,13 +878,13 @@
       </div>
       <div class="service-card reveal reveal-delay-3">
         <div class="service-num">03</div>
-        <h3>Algo SaaS platform</h3>
-        <p>Systematic strategy execution for Nifty and MCX. Long Straddle and Long Spread agents with adaptive signal filtering via Kalman filter and regime detection.</p>
+        <h3>Volatility research</h3>
+        <p>Free, open research notes on Indian index and commodity options — how implied volatility behaves through the day and into expiry. Educational only; no recommendations.</p>
         <div class="service-tags">
-          <span class="tag">Kite Connect</span>
-          <span class="tag">Long Straddle</span>
-          <span class="tag">Walk-forward tested</span>
-          <span class="tag">Early access</span>
+          <span class="tag">Free</span>
+          <span class="tag">Implied volatility</span>
+          <span class="tag">NIFTY &amp; MCX</span>
+          <span class="tag">Research notes</span>
         </div>
       </div>
     </div>
@@ -929,7 +914,7 @@
         <div class="label">Who is behind this</div>
         <h2>A quant finance professional turned <em>educator</em> and entrepreneur</h2>
         <p>A decade spent building and validating derivatives pricing models at a global bank — covering FVA, PVA, IPV, and model risk management (SR 11-7, IFRS 13, FRTB).</p>
-        <p>Now channelling that institutional quant experience into accessible advisory, structured education, and systematic trading technology for individual investors and traders.</p>
+        <p>Now channelling that institutional quant experience into mutual fund distribution, structured options education and open volatility research for individual investors and traders.</p>
         <div class="cred-grid">
           <div class="cred-item">
             <span class="cred-icon">⚙</span>
@@ -983,13 +968,13 @@
       <a href="#" class="edu-card reveal reveal-delay-2">
         <span class="edu-type-badge">✍ Blog</span>
         <h3>Understanding Vega in a volatile market</h3>
-        <p>Why Vega exposure matters more than Delta on high-IV days, and how to position your book accordingly.</p>
+        <p>Why Vega exposure can matter more than Delta on high-IV days — the mechanics, with worked examples.</p>
         <span class="edu-link">Read article →</span>
       </a>
       <a href="#" class="edu-card reveal reveal-delay-3">
         <span class="edu-type-badge">▶ Video</span>
-        <h3>Expiry-day Nifty straddle: live trade walkthrough</h3>
-        <p>A real expiry-day position breakdown — entry logic, adjustments, and exit — with P&L analysis.</p>
+        <h3>Expiry-day Nifty straddle: a mechanics walkthrough</h3>
+        <p>How an ATM straddle's premium, theta and gamma behave into expiry, on a historical example older than 30 days — mechanics only, no trade calls or P&amp;L.</p>
         <span class="edu-link">Watch now →</span>
       </a>
       <a href="#" class="edu-card reveal reveal-delay-3">
@@ -1002,91 +987,17 @@
   </div>
 </section>
 
-<!-- ALGO SAAS -->
-<section class="dark" id="algo">
-  <div class="container">
-    <div class="saas-grid">
-      <div class="saas-text reveal">
-        <div class="label" style="color:rgba(250,248,244,0.4)">Algo platform</div>
-        <h2>Systematic strategy execution, <em>automated</em></h2>
-        <p>Built on Kite Connect (Zerodha). Adaptive Kalman filter signal processing. Walk-forward validated. Designed for Indian F&O and MCX markets.</p>
-        <ul class="feature-list">
-          <li><span class="feature-check">✓</span>Long Straddle and Long Spread strategy agents</li>
-          <li><span class="feature-check">✓</span>Adaptive Kalman filter for dynamic signal quality</li>
-          <li><span class="feature-check">✓</span>Regime detection and directional confidence gate</li>
-          <li><span class="feature-check">✓</span>Walk-forward validated — no curve fitting</li>
-          <li><span class="feature-check">✓</span>Portfolio-level Greek aggregation</li>
-          <li><span class="feature-check">✓</span>Nifty options and MCX crude oil</li>
-        </ul>
-        <a href="#" class="btn-waitlist" onclick="openModal(); return false;">
-          Join early access waitlist →
-        </a>
-      </div>
-      <div class="dashboard reveal reveal-delay-2">
-        <div class="dash-header">
-          <span class="dash-title">STRATEGY DASHBOARD</span>
-          <span class="dash-status"><span class="dash-dot"></span>Systems running</span>
-        </div>
-        <div class="strategy-row">
-          <div>
-            <div class="s-name">Nifty Long Straddle</div>
-            <div class="s-sub">ATM · Weekly expiry</div>
-          </div>
-          <span class="s-state active">ACTIVE</span>
-          <span class="s-pnl up">+₹4,280</span>
-        </div>
-        <div class="strategy-row">
-          <div>
-            <div class="s-name">MCX Crude Spread</div>
-            <div class="s-sub">OTM · Rolling</div>
-          </div>
-          <span class="s-state watch">WATCH</span>
-          <span class="s-pnl up">+₹1,140</span>
-        </div>
-        <div class="strategy-row">
-          <div>
-            <div class="s-name">BankNifty Strangle</div>
-            <div class="s-sub">Wide wings · Expiry -2d</div>
-          </div>
-          <span class="s-state idle">IDLE</span>
-          <span class="s-pnl" style="color:rgba(250,248,244,0.3)">—</span>
-        </div>
-        <div class="dash-summary">
-          <div class="dash-metric">
-            <div class="dm-label">NET P&L TODAY</div>
-            <div class="dm-val up">+₹5,420</div>
-          </div>
-          <div class="dash-metric">
-            <div class="dm-label">SIGNAL CONFIDENCE</div>
-            <div class="dm-val">74%</div>
-          </div>
-          <div class="dash-metric">
-            <div class="dm-label">THETA / DAY</div>
-            <div class="dm-val" style="color:rgba(250,248,244,0.6)">₹−620</div>
-          </div>
-          <div class="dash-metric">
-            <div class="dm-label">KALMAN STATE</div>
-            <div class="dm-val up">TRENDING</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- CONSULT CTA -->
 <section id="contact" class="consult-section">
   <div class="container">
     <div class="section-head reveal" style="text-align:center">
       <div class="label">Work with us</div>
       <h2>Not sure where<br>to <em>start</em>?</h2>
-      <p>Book a free 30-minute call. We'll understand your goals and point you to the right service — no pressure, no sales pitch.</p>
+      <p style="margin-left:auto;margin-right:auto">Book a free 30-minute call about mutual fund investing or our options courses — no pressure, no sales pitch.</p>
     </div>
     <div class="consult-pills reveal reveal-delay-1">
-      <div class="consult-pill"><span class="consult-pill-dot"></span>Mutual fund portfolio review</div>
-      <div class="consult-pill"><span class="consult-pill-dot"></span>Options trading guidance</div>
-      <div class="consult-pill"><span class="consult-pill-dot"></span>Algo platform demo</div>
-      <div class="consult-pill"><span class="consult-pill-dot"></span>SEBI RIA advisory</div>
+      <div class="consult-pill"><span class="consult-pill-dot"></span>Mutual fund investing</div>
+      <div class="consult-pill"><span class="consult-pill-dot"></span>Options education</div>
     </div>
     <div style="text-align:center" class="reveal reveal-delay-2">
       <a href="#" class="big-cta" onclick="openModal(); return false;">
@@ -1108,9 +1019,9 @@
       <div class="footer-col">
         <h4>Services</h4>
         <ul>
-          <li><a href="#services">Wealth advisory</a></li>
+          <li><a href="#services">Mutual fund distribution</a></li>
           <li><a href="#learn">Options education</a></li>
-          <li><a href="#algo">Algo platform</a></li>
+          <li><a href="/research/volatility-clock.html">Volatility research</a></li>
           <li><a href="#contact">Book a call</a></li>
         </ul>
       </div>
@@ -1136,7 +1047,7 @@
     </div>
     <div class="footer-bottom">
       <p class="footer-disc">
-        AMFI Registered Mutual Fund Distributor. ARN active. SEBI RIA registration in progress. All educational content is for informational purposes only and does not constitute investment advice. Options and F&O trading involves significant risk of loss. Past performance is not indicative of future results. Please read all scheme-related documents carefully. We earn trail commission on mutual fund investments — disclosed to clients at the time of investment.
+        OptionsForQuants — AMFI-registered Mutual Fund Distributor (ARN active). Mutual Fund investments are subject to market risks, read all scheme related documents carefully. We earn trail commission on mutual fund investments — disclosed to clients at the time of investment. Application for SEBI registration as an Investment Adviser is in progress; no investment advisory services are offered until registration is granted. Education and research content is for informational purposes only and does not constitute investment advice or a recommendation to buy or sell any security. Options and F&amp;O trading involves significant risk of loss. Past performance is not indicative of future results.
       </p>
       <span class="footer-copy">© 2025 OptionsForQuants</span>
     </div>
@@ -1207,14 +1118,6 @@
       btn.disabled = false;
     }
   }
-
-  /* ─── LIVE DASHBOARD TICKER ─── */
-  const pnlEl = document.querySelector('.dm-val.up');
-  let pnl = 5420;
-  setInterval(() => {
-    pnl += Math.floor((Math.random() - 0.4) * 80);
-    if (pnlEl) pnlEl.textContent = (pnl >= 0 ? '+' : '') + '₹' + pnl.toLocaleString('en-IN');
-  }, 3000);
 
   /* ─── NAV ACTIVE SCROLL ─── */
   const sections = document.querySelectorAll('section[id]');
