@@ -130,6 +130,34 @@ canvas{width:100%;height:118px;display:block}
 </style>
 </head>
 <body>
+<!-- SITE-BAR:START (shared site navigation for standalone pages) -->
+<style>
+  .ofq-bar{position:sticky;top:0;z-index:100;background:rgba(250,248,244,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(15,14,12,.12)}
+  .ofq-bar-in{max-width:1080px;margin:0 auto;padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .ofq-logo{font-family:'DM Serif Display',Georgia,serif;font-size:20px;color:#0f0e0c;text-decoration:none;letter-spacing:-.01em;white-space:nowrap}
+  .ofq-logo em{font-style:italic;color:#c8922a}
+  .ofq-links{display:flex;gap:26px;list-style:none;margin:0;padding:0}
+  .ofq-links a{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;color:#3a3834;text-decoration:none}
+  .ofq-links a:hover,.ofq-links a[aria-current]{color:#0f0e0c}
+  .ofq-cta{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;font-weight:500;background:#0f0e0c;color:#faf8f4;border-radius:6px;padding:9px 16px;text-decoration:none;white-space:nowrap}
+  .ofq-home{display:none;font-family:'DM Sans',system-ui,sans-serif;font-size:14px;color:#1a6b5a;text-decoration:none;white-space:nowrap}
+  @media (max-width:760px){.ofq-links,.ofq-cta{display:none}.ofq-home{display:inline}}
+</style>
+<div class="ofq-bar" role="navigation" aria-label="Site">
+  <div class="ofq-bar-in">
+    <a href="/" class="ofq-logo">options<em>for</em>quants</a>
+    <ul class="ofq-links">
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#learn">Learn</a></li>
+      <li><a href="/research/volatility-clock.html">Research</a></li>
+    </ul>
+    <a href="/#contact" class="ofq-cta">Book a call</a>
+    <a href="/" class="ofq-home">← Home</a>
+  </div>
+</div>
+<!-- SITE-BAR:END -->
+
 <div class="wrap">
   <header>
     <div class="eyebrow">Options for Quants · Volatility Research</div>
@@ -409,5 +437,6 @@ new MutationObserver(render).observe(document.documentElement,
 if(window.matchMedia) matchMedia("(prefers-color-scheme:dark)")
   .addEventListener("change",render);
 </script>
+<!-- SITE-BACK --><div style="max-width:1140px;margin:0 auto;padding:8px clamp(20px,4vw,56px) 40px;font-family:'DM Sans',system-ui,sans-serif;font-size:14px"><a href="/" style="color:#1a6b5a;text-decoration:none">← Back to OptionsForQuants</a> · <a href="/research/volatility-clock.html" style="color:#1a6b5a;text-decoration:none">The Volatility Clock</a> · <a href="/research/straddle-engine.html" style="color:#1a6b5a;text-decoration:none">Anatomy of a Straddle Engine</a></div>
 </body>
 </html>
